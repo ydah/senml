@@ -1,16 +1,43 @@
-# SenML
+<h1 align="center">SenML</h1>
+
+<p align="center">Sensor measurements with base resolution, streams, and CBOR.</p>
+
+<p align="center">
+  <a href="https://rubygems.org/gems/senml"><img src="https://img.shields.io/gem/v/senml" alt="Gem version"></a>
+  <a href="https://github.com/ydah/senml/actions/workflows/main.yml"><img src="https://github.com/ydah/senml/actions/workflows/main.yml/badge.svg?branch=main" alt="CI"></a>
+  <a href="https://www.ruby-lang.org/"><img src="https://img.shields.io/badge/Ruby-%3E%3D%203.3-CC342D?logo=ruby&amp;logoColor=white" alt="Ruby 3.3 or later"></a>
+  <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License"></a>
+</p>
+
+<p align="center">
+  <a href="#installation">Installation</a> &middot;
+  <a href="#quick-start">Quick start</a> &middot;
+  <a href="#scope-and-reference-data">Scope and reference data</a> &middot;
+  <a href="#development">Development</a> &middot;
+  <a href="#license">License</a>
+</p>
 
 Read, validate, write, and resolve [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) sensor measurements in Ruby. Supports SenML JSON, incremental SenSML JSON, record fragments, and CBOR.
 
+## Features
+
+- Read and write SenML JSON and CBOR without a separate CBOR gem.
+- Resolve base fields and relative times into ordered measurements.
+- Read incremental SenSML JSON streams and select record fragments.
+
 ## Installation
+
+Add the gem to your Gemfile:
 
 ```ruby
 gem "senml"
 ```
 
+Then run `bundle install`.
+
 Requires Ruby 3.3 or later and JSON 2.19.4 or later, below version 4. JSON and the built-in Ruby CBOR codec work on CRuby, JRuby, and TruffleRuby, including CRuby development builds. There are no dependencies on other measurement or JSON-format gems.
 
-## Read and resolve
+## Quick start
 
 ```ruby
 require "senml"
@@ -104,6 +131,10 @@ bundle exec ruby script/benchmark.rb
 ```
 
 Tests cover all 14 RFC JSON examples, the full CBOR hex example, all five fragment examples, MUST violations, malformed and random CBOR, random numeric roundtrips, and a generated 100,000-record stream. Normalization tests use original examples with explicit expected measurements; CBOR tests run on every supported Ruby engine without external codec or language tools. The IANA checker fails on unexpected registry changes; review updated sources and checksums before running `bundle exec ruby script/update_registry.rb --write`.
+
+## Contributing
+
+Bug reports and pull requests are welcome on [GitHub](https://github.com/ydah/senml/issues). See [Development](#development) for the checks to run before submitting a change. Report security vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 

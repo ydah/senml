@@ -1,0 +1,10 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+gemspec
+gem "csv", require: false
+gem "json", ENV.fetch("JSON_VERSION", ">= 2.0")
+gem "rake", "~> 13.0"
+gem "rbs", ">= 3.9", "< 5", require: false
+gem "rspec", "~> 3.0"
+gem "simplecov", "~> 0.22.0", require: false

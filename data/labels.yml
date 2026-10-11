@@ -1,0 +1,19 @@
+# Independently authored implementation metadata.
+bn: {cbor: -2, type: string, accessor: base_name, base: true, section: '4.1'}
+bt: {cbor: -3, type: number, accessor: base_time, base: true, section: '4.1'}
+bu: {cbor: -4, type: string, accessor: base_unit, base: true, section: '4.1'}
+bv: {cbor: -5, type: number, accessor: base_value, base: true, section: '4.1'}
+bs: {cbor: -6, type: number, accessor: base_sum, base: true, section: '4.1'}
+bver: {cbor: -1, type: integer, accessor: base_version, base: true, section: '4.1'}
+n: {cbor: 0, type: string, accessor: name, section: '4.2'}
+u: {cbor: 1, type: string, accessor: unit, section: '4.2'}
+v: {cbor: 2, type: number, accessor: numeric_value, section: '4.2'}
+vs: {cbor: 3, type: string, accessor: string_value, section: '4.2'}
+vb: {cbor: 4, type: boolean, accessor: boolean_value, section: '4.2'}
+vd: {cbor: 8, type: string, accessor: data_value, section: '4.2'}
+s: {cbor: 5, type: number, accessor: sum, section: '4.2'}
+t: {cbor: 6, type: number, accessor: time, section: '4.2'}
+ut: {cbor: 7, type: number, accessor: update_time, section: '4.2'}
+vlo: {type: string, accessor: object_link, section: 'OMA LwM2M 1.1 7.4.5'}
+bct: {type: string, accessor: base_content_format, base: true, section: 'RFC9193 4'}
+ct: {type: string, accessor: content_format, section: 'RFC9193 3'}

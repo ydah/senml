@@ -1,0 +1,14 @@
+{
+  "rfc8428.txt": {
+    "url": "https://www.rfc-editor.org/rfc/rfc8428.txt",
+    "sha256": "643195be834507be9e5a8e4c8c506b8c4523159fcdd09b822963971b34faffa9"
+  },
+  "senml-units.csv": {
+    "url": "https://www.iana.org/assignments/senml/senml-units.csv",
+    "sha256": "8f94907f7fbbe7d28bee6cf5d887ebbf73e2ded545f7376041031038e185eaee"
+  },
+  "senml-labels.csv": {
+    "url": "https://www.iana.org/assignments/senml/senml-labels.csv",
+    "sha256": "79ac1b9e534cae3dc934a1b98580d46b4269d05cb3cdac2f747f947a8e1386f4"
+  }
+}

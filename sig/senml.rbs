@@ -1,0 +1,86 @@
+module Senml
+  VERSION: String
+end
+module SenML
+  VERSION: String
+  FORMAT_VERSION: Integer
+  ABSOLUTE_TIME: Integer
+  type json = nil | bool | Integer | Float | String | Array[json] | Hash[String, json]
+  type object = Hash[String, json]
+  type number = Integer | Float
+  class Error < StandardError
+  end
+  class ParseError < Error
+  end
+  class ConversionError < Error
+  end
+  class LimitError < ParseError
+  end
+  class ValidationError < Error
+    attr_reader pointer: String
+    def initialize: (String, ?pointer: String) -> void
+  end
+  class UnsupportedVersionError < ValidationError
+  end
+  def self.parse: (String, ?strict: bool, **Integer) -> Pack
+  def self.parse_cbor: (String, ?strict: bool, ?streaming: bool, **Integer) -> Pack
+  module Units
+    SYMBOLS: Array[String]
+    def self.registered?: (String) -> bool
+  end
+  class Record
+    def initialize: (object, ?base: object, **Integer) -> void
+    def []: (String | Symbol) -> json
+    def to_h: () -> object
+    def name: () -> String
+    def unit: () -> String?
+    def time: () -> number
+    def value: () -> (number | String | bool)?
+    def sum: () -> number?
+    def time_at: (?now: Time | number | nil) -> Time
+    def data: () -> String?
+    def resolved: (now: number) -> object
+    def base_name: () -> String?
+    def base_time: () -> number?
+    def base_unit: () -> String?
+    def base_value: () -> number?
+    def base_sum: () -> number?
+    def base_version: () -> Integer?
+    def numeric_value: () -> number?
+    def string_value: () -> String?
+    def boolean_value: () -> bool?
+    def data_value: () -> String?
+    def update_time: () -> number?
+    def object_link: () -> String?
+    def base_content_format: () -> String?
+    def content_format: () -> String?
+  end
+  class Pack
+    include Enumerable[Record]
+    attr_reader warnings: Array[ValidationError]
+    def initialize: (Array[object | Record], ?strict: bool, **Integer) -> void
+    def each: () { (Record) -> void } -> Array[Record]
+            | () -> Enumerator[Record, Array[Record]]
+    def []: (Integer) -> Record?
+    def size: () -> Integer
+    alias length size
+    def to_h: () -> Array[object]
+    def to_json: (*untyped) -> String
+    def to_cbor: () -> String
+    def resolve: (?now: Time | number) -> Pack
+    def select_fragment: (String) -> Pack
+    def self.build: (?base_name: String?, ?base_time: number?, ?base_unit: String?, **untyped) { (Builder) -> void } -> Pack
+    class Builder
+      attr_reader records: Array[object]
+      def initialize: (object) -> void
+      def add: (**json) -> Builder
+    end
+  end
+  class StreamReader
+    include Enumerable[Record]
+    attr_reader warnings: Array[ValidationError]
+    def initialize: (untyped, ?strict: bool, ?allow_incomplete: bool, **Integer) -> void
+    def each: () { (Record) -> void } -> StreamReader
+            | () -> Enumerator[Record, StreamReader]
+  end
+end

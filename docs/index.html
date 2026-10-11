@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Read, validate, and write RFC 8428 sensor measurements in Ruby. Resolve shared base fields and relative times, process SenSML JSON streams, and exchange CBOR.">
+  <meta name="theme-color" content="#f8fafc">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="senml — Turn sensor records into resolved measurements">
+  <meta property="og:description" content="Read, validate, and write RFC 8428 sensor measurements in Ruby. Resolve shared base fields and relative times, process SenSML JSON streams, and exchange CBOR.">
+  <meta property="og:url" content="https://ydah.github.io/senml/">
+  <title>senml — Turn sensor records into resolved measurements</title>
+  <link rel="canonical" href="https://ydah.github.io/senml/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./" aria-label="senml home"><img src="favicon.svg" width="32" height="32" alt=""><span>senml</span></a>
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#installation">Installation</a>
+        <a href="https://github.com/ydah/senml#readme">Documentation</a>
+        <a href="https://github.com/ydah/senml">GitHub</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="container" tabindex="-1">
+    <section class="hero" aria-labelledby="title">
+      <div class="hero-copy">
+        <p class="format">SenML / SenSML JSON · CBOR</p>
+        <h1 id="title">Turn sensor records into resolved measurements</h1>
+        <p class="intro">Read, validate, and write RFC 8428 sensor measurements in Ruby. Resolve shared base fields and relative times, process SenSML JSON streams, and exchange CBOR.</p>
+        <div class="actions">
+          <a class="button" href="#installation">Get started</a>
+          <a class="text-link" href="https://github.com/ydah/senml#readme">Read the documentation</a>
+        </div>
+        <p class="metadata"><span>Ruby 3.3+</span><a href="https://github.com/ydah/senml/blob/main/LICENSE.txt">MIT license</a><a href="https://rubygems.org/gems/senml">RubyGems</a></p>
+      </div>
+      <figure class="example" id="quick-start">
+        <figcaption><span>Quick start</span><span>Ruby</span></figcaption>
+        <pre tabindex="0" role="region" aria-label="Ruby quick start example"><code>require <span class="token-string">&quot;</span><span class="token-string">senml</span><span class="token-string">&quot;</span>
+
+pack = SenML::Pack.build(base_name: <span class="token-string">&quot;</span><span class="token-string">room:</span><span class="token-string">&quot;</span>, base_time: 1_700_000_000, base_unit: <span class="token-string">&quot;</span><span class="token-string">Cel</span><span class="token-string">&quot;</span>) <span class="token-keyword">do</span> |p|
+  p.add(n: <span class="token-string">&quot;</span><span class="token-string">temperature</span><span class="token-string">&quot;</span>, v: 21.5, t: 2)
+  p.add(n: <span class="token-string">&quot;</span><span class="token-string">temperature</span><span class="token-string">&quot;</span>, v: 21.8, t: 1)
+<span class="token-keyword">end</span>
+
+parsed = SenML.parse(pack.to_json)
+parsed.first.name                         <span class="token-comment"># =&gt; &quot;room:temperature&quot;
+</span>parsed.first.time                         <span class="token-comment"># =&gt; 1700000002
+</span>parsed.first[<span class="token-string">&quot;</span><span class="token-string">t</span><span class="token-string">&quot;</span>]                         <span class="token-comment"># =&gt; 2 (the original field)
+</span>resolved = parsed.resolve(now: Time.at(1_700_000_000))
+resolved.map(&amp;:value)                     <span class="token-comment"># =&gt; [21.8, 21.5]
+</span>resolved.first.time_at                    <span class="token-comment"># =&gt; a UTC Time</span></code></pre>
+      </figure>
+    </section>
+    <ul class="features" aria-label="Features">
+        <li><h2>Resolve base fields</h2><p>Expand shared names, units, values, and times into ordered measurements while retaining source records.</p></li>
+        <li><h2>Read streams</h2><p>Process complete JSON records incrementally and select record fragments with their effective base context.</p></li>
+        <li><h2>Exchange CBOR</h2><p>Use the built-in Ruby codec for SenML CBOR without adding a separate CBOR gem.</p></li>
+    </ul>
+    <section class="section" id="installation" aria-labelledby="installation-title">
+      <h2 id="installation-title">Installation</h2>
+      <div class="section-body">
+        <p>Add the gem to your Gemfile:</p>
+        <pre class="install-command" tabindex="0" role="region" aria-label="Gemfile entry"><code>gem "senml"</code></pre>
+        <p>Run <code>bundle install</code>, then try the <a href="#quick-start">quick start</a>. Requires Ruby 3.3 or later.</p>
+        <p>For supported dependencies and optional integrations, see the <a href="https://github.com/ydah/senml#installation">installation guide</a>.</p>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="scope-title">
+      <h2 id="scope-title">Scope &amp; documentation</h2>
+      <div class="section-body">
+        <p>Streaming reads apply to JSON; CBOR decoding consumes a complete input string. XML, EXI, unit conversion, CoAP transport, and RFC 9100 feature-version negotiation are outside scope. Nonintegral measurements use binary64 floating-point values.</p>
+        <p><a href="https://github.com/ydah/senml#readme">Read the full documentation</a> for supported formats, examples, and API details.</p>
+        
+        <ul class="resource-links" aria-label="Project resources">
+          <li><a href="https://github.com/ydah/senml/blob/main/CHANGELOG.md">Changelog</a></li>
+          <li><a href="https://github.com/ydah/senml/issues">Report an issue</a></li>
+          <li><a href="https://github.com/ydah/senml/blob/main/SECURITY.md">Security</a></li>
+          <li><a href="https://github.com/ydah/senml#contributing">Contributing</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <footer class="container site-footer">
+    <div class="footer-top"><p>senml · Maintained by <a href="https://github.com/ydah">ydah</a></p><p>Open source under the <a href="https://github.com/ydah/senml/blob/main/LICENSE.txt">MIT license</a>.</p></div>
+    <nav class="related" aria-label="Related Ruby gems">
+      <p>More Ruby gems for structured data</p>
+      <ul>
+          <li><a href="https://ydah.github.io/dns_json/">dns_json</a></li>
+          <li><a href="https://ydah.github.io/iodef/">iodef</a></li>
+          <li><a href="https://ydah.github.io/jcard_jcal/">jcard_jcal</a></li>
+          <li><a href="https://ydah.github.io/jscalendar/">jscalendar</a></li>
+          <li><a href="https://ydah.github.io/jscontact/">jscontact</a></li>
+          <li><a href="https://ydah.github.io/sd_jwt/">sd_jwt</a></li>
+          <li><a href="https://ydah.github.io/yang_json/">yang_json</a></li>
+      </ul>
+    </nav>
+  </footer>
+</body>
+</html>

@@ -20,12 +20,6 @@
 
 Read, validate, write, and resolve [RFC 8428](https://www.rfc-editor.org/rfc/rfc8428) sensor measurements in Ruby. Supports SenML JSON, incremental SenSML JSON, record fragments, and CBOR.
 
-## Features
-
-- Read and write SenML JSON and CBOR without a separate CBOR gem.
-- Resolve base fields and relative times into ordered measurements.
-- Read incremental SenSML JSON streams and select record fragments.
-
 ## Installation
 
 Add the gem to your Gemfile:
@@ -36,7 +30,7 @@ gem "senml"
 
 Then run `bundle install`.
 
-Requires Ruby 3.3 or later and JSON 2.19.4 or later, below version 4. JSON and the built-in Ruby CBOR codec work on CRuby, JRuby, and TruffleRuby, including CRuby development builds. There are no dependencies on other measurement or JSON-format gems.
+Requires Ruby 3.3 or later and `json` >= 2.19.4 and < 4.
 
 ## Quick start
 
@@ -71,7 +65,7 @@ end
 selected = pack.select_fragment("#rec=1,2-*")
 ```
 
-The stream reader yields each complete object without retaining the whole array. It carries immutable base fields and version state between records. Repeated records reuse inherited base strings; name-prefix validation is cached until the base changes. `allow_incomplete: true` also accepts a SenSML stream that ends after a complete record without a closing array bracket; an unfinished object still fails. This reader handles JSON streams; CBOR parsing consumes a complete input String.
+The stream reader yields each complete object without retaining the whole array, carrying base fields and version state between records. `allow_incomplete: true` accepts a SenSML stream that ends after a complete record without a closing array bracket; an unfinished object still fails. This reader handles JSON streams; CBOR parsing consumes a complete input String.
 
 Fragments use one-based record indices and support single records, closed ranges, open ranges, and comma-separated combinations. Selection keeps original order, removes duplicates, and carries each selected record's effective base context, emitting inherited base fields only at the first selected record and when they change. Out-of-range and reversed ranges fail.
 
@@ -110,16 +104,12 @@ CBOR maps the RFC's integer labels and binary data values, preserves JSON-compat
 | --- | --- |
 | SenML and incremental SenSML JSON | XML and EXI |
 | Base resolution and record fragments | Unit conversion and CoAP transport |
-| CBOR on the runtimes listed above | Incremental CBOR decoding |
+| CBOR | Incremental CBOR decoding |
 | RFC 8428 version rules and registered labels | FETCH/PATCH and RFC 9100 feature versions |
 
-The implementation supports RFC 8428 sections 4–6 and 9: SenML/SenSML JSON, base resolution, CBOR, and record fragments. It recognizes the IANA unit identifiers and registered labels checked on 2026-10-11, including `vlo` and the `ct`/`bct` labels from [RFC 9193](https://www.rfc-editor.org/rfc/rfc9193). Content-format strings are preserved opaquely, and `bct` resolves onto binary measurements. Unknown base labels stop resolution and fragment selection because their inheritance rules are unknown, including when resolving a later record that inherits the unsupported base.
+Registered labels include `vlo` and the `ct`/`bct` labels from [RFC 9193](https://www.rfc-editor.org/rfc/rfc9193). Content-format strings are preserved opaquely, and `bct` resolves onto binary measurements. Unknown base labels stop resolution and fragment selection because their inheritance rules are unknown, including when resolving a later record that inherits the unsupported base.
 
-XML, EXI, unit conversion, CoAP transport, FETCH/PATCH variants, and feature-version negotiation from RFC 9100 are outside this release. The library makes no network requests when parsing or resolving measurements.
-
-The identifier/type metadata in `data/` records the supported protocol fields. RFC text, examples, grammars, IANA source files, and external implementation code are never committed or packaged. Development scripts fetch checksum-pinned references into ignored `tmp/` directories, retain notices, and extract test fixtures there. See [IANA terms](https://www.iana.org/help/licensing-terms), [IETF terms](https://trustee.ietf.org/license-info), and `script/sources.json` for sources and checksums.
-
-The RFC's explicitly unfinished section 5.1.2 stream is closed after its final complete measurement for whole-pack tests. The first section 5.1.7 thermostat example starts with a base-only record, conflicting with section 4.2's value-or-sum requirement; strict parsing rejects the original, and its base name is moved into the first measurement for the roundtrip fixture. Original excerpts and corrections remain together in ignored fixture storage. [Erratum 6728](https://www.rfc-editor.org/errata/eid6728), held for document update, concerns an XML/CDDL comma and does not change the supported encodings.
+The library makes no network requests when parsing or resolving measurements.
 
 ## Development
 
@@ -131,7 +121,9 @@ bundle exec rbs -I sig validate
 bundle exec ruby script/benchmark.rb
 ```
 
-Tests cover all 14 RFC JSON examples, the full CBOR hex example, all five fragment examples, MUST violations, malformed and random CBOR, random numeric roundtrips, and a generated 100,000-record stream. Normalization tests use original examples with explicit expected measurements; CBOR tests run on every supported Ruby engine without external codec or language tools. The IANA checker fails on unexpected registry changes; review updated sources and checksums before running `bundle exec ruby script/update_registry.rb --write`.
+The first test run downloads RFC/IANA fixtures into ignored `tmp/` directories and requires network access.
+
+Run `bundle exec ruby script/update_registry.rb` to check IANA metadata. Review registry changes before updating it with `--write`.
 
 ## Contributing
 
@@ -139,4 +131,4 @@ Bug reports and pull requests are welcome on [GitHub](https://github.com/ydah/se
 
 ## License
 
-Project code is MIT licensed; see [LICENSE.txt](LICENSE.txt). Added library dependencies are limited to MIT-licensed libraries. Ruby implementations and standard/default libraries (including JSON) are exceptions and retain their own licenses. Downloaded standards material is test reference data under its source terms and is neither committed nor packaged. These statements do not relicense third-party material.
+Released under the [MIT License](LICENSE.txt).
